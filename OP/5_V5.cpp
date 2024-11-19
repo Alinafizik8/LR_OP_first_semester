@@ -71,7 +71,7 @@ ostream& operator<<(ostream& os, const speed& r) // перегрузка опе�
 
 istream& operator>>(istream& is, speed& r) // перегрузка оператора помещения в поток
 {
-    is >> r.nomber >> r.sped;
+    is >> r.nomber >> r.sped >> r.unit_measure;
     return is;
 }
 
