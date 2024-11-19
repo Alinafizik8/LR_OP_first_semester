@@ -191,5 +191,3 @@ int main() {
     cout << "Have a nice day!";
     return 0;
 }
-    return 0;
-}
