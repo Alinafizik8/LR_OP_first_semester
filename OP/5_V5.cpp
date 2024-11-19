@@ -77,7 +77,7 @@ istream& operator>>(istream& is, speed& r) // перегрузка операт�
 
 void displaySpeeds(const vector<speed>& speeds) {
     cout << fixed << setprecision(2);
-    cout << "Nombers\tSpeed (km/h)\tSpeed (m/s)\n";
+    cout << "Numbers\tSpeed (km/h)\tSpeed (m/s)\n";
     for (const auto& sp : speeds) {
         cout << sp.nomber << "\t"
             << sp.toKilometersPerHour() << "\t\t"
@@ -86,7 +86,7 @@ void displaySpeeds(const vector<speed>& speeds) {
 }
 
 int main() {
-    cout << "Good time of a day!";
+    cout << "Good time of a day!"<<endl;
     char choise1;
     cout << "Reading from a file or console (f/c)?: ";
     cin >> choise1;
@@ -107,6 +107,11 @@ int main() {
             speed_value = check();
             cout << "Enter the unit of measurement(km/h or m/s): ";
             cin >> unit_of_measurement;
+            while (unit_of_measurement != "km/h" && unit_of_measurement != "m/s") {
+                cin.ignore(1000, '\n');
+                cout << "Enter the unit of measurement again(km/h or m/s): ";
+                cin >> unit_of_measurement;
+            }
             speeds.emplace_back(speed_value, i + 1, unit_of_measurement); // создаем экземпляр с номером
         }
     }
@@ -116,12 +121,15 @@ int main() {
         ifstream fin(name);
         if (!fin) {
             cout << "Error of open file!";
+            return 1;
         }
         else {
             char elem;
             int len;
             fin >> len;
             string line;
+            getline(fin, line);
+            line.clear();
             string speed_value_line;
             for (int i = 0; i < len; ++i) {
                 getline(fin, line);
@@ -142,7 +150,7 @@ int main() {
                 }
                 speed_value_line.clear();
                 line.clear();
-                speeds.emplace_back(speed_value, i + 1, unit_of_measurement); // создаем экземпляр с номером
+                speeds.emplace_back(speed_value, i + 1, unit_of_measurement);
             }
         }
         fin.close();
@@ -167,10 +175,11 @@ int main() {
         fout.open(name);
         if (!fout) {
             cout << "Error of open file!";
+            return 1;
         }
         else {
             fout << fixed << setprecision(2);
-            fout << "Nombers\tSpeed (km/h)\tSpeed (m/s)\n";
+            fout << "Numbers\tSpeed (km/h)\tSpeed (m/s)\n";
             for (const auto& sp : speeds) {
                 fout << sp.nomber << "\t"
                     << sp.toKilometersPerHour() << "\t\t"
@@ -179,5 +188,8 @@ int main() {
         }
         fout.close();
     }
+    cout << "Have a nice day!";
+    return 0;
+}
     return 0;
 }
