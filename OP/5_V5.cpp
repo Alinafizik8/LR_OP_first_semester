@@ -86,11 +86,11 @@ void displaySpeeds(const vector<speed>& speeds) {
 }
 
 int main() {
-    cout << "Good time of a day!"<<endl;
+    cout << "Good time of a day!" << endl;
     char choise1;
     cout << "Reading from a file or console (f/c)?: ";
     cin >> choise1;
-    while (choise1 != 'f' && choise1 != 'c') {
+    while ((choise1 != 'f' && choise1 != 'c') || cin.peek() != '\n') {
         cin.ignore(1000, '\n');
         cout << "Enter your chose again: ";
         cin >> choise1;
@@ -160,7 +160,7 @@ int main() {
     char choise2;
     cout << "Output to a file or to the console(f/c)?: ";
     cin >> choise2;
-    while (choise2 != 'f' && choise2 != 'c') {
+    while ((choise2 != 'f' && choise2 != 'c') || cin.peek() != '\n') {
         cin.ignore(1000, '\n');
         cout << "Enter your chose again: ";
         cin >> choise2;
@@ -187,6 +187,12 @@ int main() {
         }
         else {
             fout << fixed << setprecision(2);
+            fout << "Array of instances of the class:\n";
+            fout << "Numbers\tSpeed\tUnit of measurement\n";
+            for (const auto sp : speeds) {
+                fout << sp << endl;
+            }
+            fout << endl;
             fout << "Numbers\tSpeed (km/h)\tSpeed (m/s)\n";
             for (const auto& sp : speeds) {
                 fout << sp.nomber << "\t"
