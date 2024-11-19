@@ -66,7 +66,7 @@ public:
 
 ostream& operator<<(ostream& os, const speed& r) // перегрузка оператора помещения в поток
 {
-    return os << r.nomber << "\t" << r.sped;
+    return os << r.nomber << "\t" << r.sped << "\t" << r.unit_measure;
 }
 
 istream& operator>>(istream& is, speed& r) // перегрузка оператора помещения в поток
@@ -151,6 +151,7 @@ int main() {
                 speed_value_line.clear();
                 line.clear();
                 speeds.emplace_back(speed_value, i + 1, unit_of_measurement);
+                unit_of_measurement.clear();
             }
         }
         fin.close();
@@ -165,7 +166,14 @@ int main() {
         cin >> choise2;
     }
     if (choise2 == 'c') {
-        cout << "\nArray of instances of the speed class and processing results:\n";
+        cout << fixed << setprecision(2);
+        cout << "\nArray of instances of the class:\n";
+        cout << "Numbers\tSpeed\tUnit of measurement\n";
+        for (const auto sp : speeds) {
+            cout << sp << endl;
+        }
+        cout << endl;
+        cout << "\nArray processing results of instances of the class:\n";
         displaySpeeds(speeds);
     }
     else {
