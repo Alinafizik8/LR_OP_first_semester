@@ -25,13 +25,7 @@ public:
 
     speed() : nomber(0), sped(0.0), unit_measure("") {};
 
-    speed(double a, string b) {
-        sped = a;
-        nomber = 1;
-        unit_measure = b;
-    }
-
-    speed(double a, int b, string c) {
+    speed(int b, double a, string c) {
         sped = a;
         nomber = b;
         unit_measure = c;
@@ -62,6 +56,15 @@ public:
             return sped * 3.6;
         }
     }
+
+    bool exeptetionsmy() {
+        if ((nomber <= 0) || (sped < 0) || ((unit_measure != "km/h") && (unit_measure != "m/s"))) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
 };
 
 ostream& operator<<(ostream& os, const speed& r) // перегрузка оператора помещения в поток
@@ -69,15 +72,30 @@ ostream& operator<<(ostream& os, const speed& r) // перегрузка опе�
     return os << r.nomber << "\t" << r.sped << "\t" << r.unit_measure;
 }
 
-istream& operator>>(istream& is, speed& r) // перегрузка оператора помещения в поток
+istream& operator>>(istream& is, speed& r) // перегрузка оператора взятия из потока
 {
-    is >> r.nomber >> r.sped >> r.unit_measure;
+    int prot_nomber;
+    double prot_sped;
+    string prot_unit_measure;
+    is >> prot_nomber >> prot_sped >> prot_unit_measure;
+    if (!cin) {
+        is.clear();
+        is.ignore(10000, '\n');
+        r.nomber = 0;
+        r.sped = 0;
+        r.unit_measure = "Error";
+    }
+    else {
+        r.nomber = prot_nomber;
+        r.sped = prot_sped;
+        r.unit_measure = prot_unit_measure;
+    }
     return is;
 }
 
 void displaySpeeds(const vector<speed>& speeds) {
     cout << fixed << setprecision(2);
-    cout << "Numbers\tSpeed (km/h)\tSpeed (m/s)\n";
+    cout << "Number\tSpeed (km/h)\tSpeed (m/s)\n";
     for (const auto& sp : speeds) {
         cout << sp.nomber << "\t"
             << sp.toKilometersPerHour() << "\t\t"
@@ -96,23 +114,21 @@ int main() {
         cin >> choise1;
     }
     vector<speed> speeds;
-    string unit_of_measurement;
-    double speed_value;
     string name;
     if (choise1 == 'c') {
         cout << "Enter length of array: ";
         int length = check();
+        cout << "Enter the speed data in the following format: " << endl;
+        cout << "1 50.0 km/h(m/s)" << endl;
         for (int i = 0; i < length; ++i) {
-            cout << "Enter the speed for instance " << i + 1 << ": ";
-            speed_value = check();
-            cout << "Enter the unit of measurement(km/h or m/s): ";
-            cin >> unit_of_measurement;
-            while (unit_of_measurement != "km/h" && unit_of_measurement != "m/s") {
-                cin.ignore(1000, '\n');
-                cout << "Enter the unit of measurement again(km/h or m/s): ";
-                cin >> unit_of_measurement;
+            speed ruch;
+            cout << i + 1 << ": ";
+            cin >> ruch;
+            while (ruch.exeptetionsmy()) {
+                cout << "Error! Enter " << i+1 << " element again: ";
+                cin >> ruch;
             }
-            speeds.emplace_back(speed_value, i + 1, unit_of_measurement); // создаем экземпляр с номером
+            speeds.emplace_back(ruch);
         }
     }
     else {
@@ -124,34 +140,22 @@ int main() {
             return 1;
         }
         else {
-            char elem;
             int len;
             fin >> len;
             string line;
             getline(fin, line);
             line.clear();
-            string speed_value_line;
             for (int i = 0; i < len; ++i) {
-                getline(fin, line);
-                int flag = 0;
-                for (int j = 0; j < size(line); ++j) {
-                    if (line[j] != ' ' && flag == 0) {
-                        speed_value_line.append(1, line[j]);
-                    }
-                    else {
-                        if (flag == 0) {
-                            speed_value = stod(speed_value_line);
-                            flag += 1;
-                        }
-                        else {
-                            unit_of_measurement.append(1, line[j]);
-                        }
-                    }
+                speed element;
+                fin >> element;
+                if (element.exeptetionsmy()) {
+                    cout << "Error! Wrong line!" << endl;
                 }
-                speed_value_line.clear();
+                else {
+                    speeds.emplace_back(element);
+                }
+                getline(fin, line);
                 line.clear();
-                speeds.emplace_back(speed_value, i + 1, unit_of_measurement);
-                unit_of_measurement.clear();
             }
         }
         fin.close();
@@ -166,15 +170,20 @@ int main() {
         cin >> choise2;
     }
     if (choise2 == 'c') {
-        cout << fixed << setprecision(2);
-        cout << "\nArray of instances of the class:\n";
-        cout << "Numbers\tSpeed\tUnit of measurement\n";
-        for (const auto sp : speeds) {
-            cout << sp << endl;
+        if (speeds.size() == 0) {
+            cout << "\nThere are no avalubale lines to give you\n";
         }
-        cout << endl;
-        cout << "\nArray processing results of instances of the class:\n";
-        displaySpeeds(speeds);
+        else {
+            cout << fixed << setprecision(2);
+            cout << "\nArray of instances of the class:\n";
+            cout << "Number\tSpeed\tUnit of measurement\n";
+            for (const auto sp : speeds) {
+                cout << sp << endl;
+            }
+            cout << endl;
+            cout << "\nArray processing results of instances of the class:\n";
+            displaySpeeds(speeds);
+        }
     }
     else {
         cout << "Enter the name of the file: ";
@@ -186,22 +195,27 @@ int main() {
             return 1;
         }
         else {
-            fout << fixed << setprecision(2);
-            fout << "Array of instances of the class:\n";
-            fout << "Numbers\tSpeed\tUnit of measurement\n";
-            for (const auto sp : speeds) {
-                fout << sp << endl;
+            if (speeds.size() == 0) {
+                cout << "\nThere are no avalubale lines to give you\n";
             }
-            fout << endl;
-            fout << "Numbers\tSpeed (km/h)\tSpeed (m/s)\n";
-            for (const auto& sp : speeds) {
-                fout << sp.nomber << "\t"
-                    << sp.toKilometersPerHour() << "\t\t"
-                    << sp.toMetersPerSecond() << "\n";
+            else {
+                fout << fixed << setprecision(2);
+                fout << "Array of instances of the class:\n";
+                fout << "Number\tSpeed\tUnit of measurement\n";
+                for (const auto sp : speeds) {
+                    fout << sp << endl;
+                }
+                fout << "\nArray processing results of instances of the class:\n";
+                fout << "Number\tSpeed (km/h)\tSpeed (m/s)\n";
+                for (const auto& sp : speeds) {
+                    fout << sp.nomber << "\t"
+                        << sp.toKilometersPerHour() << "\t\t"
+                        << sp.toMetersPerSecond() << "\n";
+                }
             }
         }
         fout.close();
     }
-    cout << "Have a nice day!";
+    cout << "\nHave a nice day!";
     return 0;
 }
