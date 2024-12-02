@@ -5,16 +5,16 @@
 #include <iomanip> //для работы с форматированием ввода
 using namespace std; //для использования идентификаторов из пространства имен
 
-int CheckNum(string line) {
+int checkNum(string line) {
     int resultNum = 0;
-    if (!line.empty() && line[0] != '\n' && line.size() <= 20) {
-        string checking = "";
+    if (!line.empty() && line[0] != '\n' && line.size() <= 10) {
+        int checking = 0;
         for (int i = 0; i < size(line); ++i) {
             if (isdigit(line[i])) {
-                checking.append(1, line[i]);
+                checking += 1;
             }
         }
-        if (size(checking) == size(line)) {
+        if (checking == size(line)) {
             resultNum = stoi(line);
         }
     }
@@ -24,7 +24,7 @@ int CheckNum(string line) {
 int check() {
     string line;
     getline(cin, line);
-    int number = CheckNum(line);
+    int number = checkNum(line);
     if (!number) {
         cout << "Error! Enter again: ";
         return check();
@@ -32,22 +32,22 @@ int check() {
     return number;
 }
 
-class speed {//создание класса
+class Speed {//создание класса
 public://доступно для всех мест программы
     int nomber;
     double sped;               //объявление полей класса
     string unit_measure;
 
     //конструкторы
-    speed() : nomber(0), sped(0.0), unit_measure("") {};
+    Speed() : nomber(0), sped(0.0), unit_measure("") {};
 
-    speed(int b, double a, string c) {
+    Speed(int b, double a, string c) {
         sped = a;
         nomber = b;
         unit_measure = c;
     }
 
-    speed(string a) {
+    Speed(string a) {
         if (empty(a)) {
             nomber = 0;
             sped = 0;
@@ -60,13 +60,13 @@ public://доступно для всех мест программы
         }
     }
 
-    speed(const speed& c) {//конструктор копирования
+    Speed(const Speed& c) {//конструктор копирования
         sped = c.sped;
         nomber = c.nomber;
         unit_measure = c.unit_measure;
     }
 
-    ~speed() { unit_measure.clear(); };//деструктор
+    ~Speed() { unit_measure.clear(); };//деструктор
 
     double SpedChanger() const {
         if (unit_measure == "km/h") {
@@ -96,38 +96,38 @@ public://доступно для всех мест программы
     }
 };
 
-class racer {
+class Racer {
 public://доступно для всех мест программы
     string name;
     int number;               //объявление полей класса
-    vector<speed> speeds_name;
+    vector<Speed> Speeds_name;
 
     //конструкторы
-    racer() : name(""), number(0), speeds_name() {};
+    Racer() : name(""), number(0), Speeds_name() {};
 
-    racer(string a, int b, speed c) {
+    Racer(string a, int b, Speed c) {
         name = a;
         number = b;
-        speeds_name.push_back(c);
+        Speeds_name.push_back(c);
     }
 
-    racer(const  racer& c) {//конструктор копирования
+    Racer(const  Racer& c) {//конструктор копирования
         name = c.name;
         number = c.number;
-        speeds_name = c.speeds_name;
+        Speeds_name = c.Speeds_name;
     }
 
-    ~racer() {};
+    ~Racer() { Speeds_name.clear(); };
 
     int BestCircle() const {
-        vector<vector<int>>circles;
-        for (int i = 0; i < speeds_name.size(); ++i) {
-            circles.push_back(vector<int>());
+        vector<vector<double>>circles;
+        for (int i = 0; i < Speeds_name.size(); ++i) {
+            circles.push_back(vector<double>());
         }
-        double max_speed = 0;
+        double max_Speed = 0;
         int result = 0;
         int y = 0;
-        for (auto sp : speeds_name) {
+        for (auto sp : Speeds_name) {
             circles[y].push_back(sp.nomber);
             if (sp.unit_measure == "km/h") {
                 circles[y].push_back(sp.sped / 3.6);
@@ -137,10 +137,10 @@ public://доступно для всех мест программы
             }
             y += 1;
         }
-        for (int i = 0; i < speeds_name.size(); ++i) {
-            if (circles[i][1] > max_speed) {
-                max_speed = circles[i][1];
-                result = circles[i][0];
+        for (int i = 0; i < Speeds_name.size(); ++i) {
+            if (circles[i][1] > max_Speed) {
+                max_Speed = circles[i][1];
+                result = (int)circles[i][0];
             }
         }
         circles.clear();
@@ -148,12 +148,12 @@ public://доступно для всех мест программы
     }
 };
 
-ostream& operator<<(ostream& os, const speed& r) // перегрузка оператора помещения в поток
+ostream& operator<<(ostream& os, const Speed& r) // перегрузка оператора помещения в поток
 {
     return os << setw(12) << left << r.nomber << setw(6) << r.sped << " " << setw(12) << r.unit_measure;
 }
 
-istream& operator>>(istream& is, speed& r) // перегрузка оператора взятия из потока
+istream& operator>>(istream& is, Speed& r) // перегрузка оператора взятия из потока
 {
     //проверка на соответствие типам полей класса
     int prot_nomber;
@@ -192,53 +192,53 @@ istream& operator>>(istream& is, speed& r) // перегрузка операт�
     return is;
 }
 
-ostream& operator<<(ostream& os, const racer& r) // перегрузка оператора помещения в поток
+ostream& operator<<(ostream& os, const Racer& r) // перегрузка оператора помещения в поток
 {
-    os << setw(15) << left << r.name << setw(13) << left << r.number << setw(19) << r.speeds_name[0] << r.speeds_name[0].SpedChanger() << " " << setw(12) << r.speeds_name[0].UnitChanger() << r.BestCircle() << endl;
-    for (int i = 1; i < r.speeds_name.size(); ++i) {
-        os << setw(28) << " " << setw(19) << r.speeds_name[i] << r.speeds_name[i].SpedChanger() << " " << setw(12) << r.speeds_name[i].UnitChanger() << endl;
+    os << setw(15) << left << r.name << setw(13) << left << r.number << setw(19) << r.Speeds_name[0] << r.Speeds_name[0].SpedChanger() << " " << setw(12) << r.Speeds_name[0].UnitChanger() << r.BestCircle() << endl;
+    for (int i = 1; i < r.Speeds_name.size(); ++i) {
+        os << setw(28) << " " << setw(19) << r.Speeds_name[i] << r.Speeds_name[i].SpedChanger() << " " << setw(12) << r.Speeds_name[i].UnitChanger() << endl;
     }
     os << "------------------------------------------------------------------------------------\n";
     return os;
 }
 
-istream& operator>>(istream& is, racer& r) // перегрузка оператора взятия из потока
+istream& operator>>(istream& is, Racer& r) // перегрузка оператора взятия из потока
 {
     //проверка на соответствие типам полей класса
     string prot_number_st;               //объявление полей класса
-    speed prot_speeds_name;
-    cout << "Enter name of the racer: ";
+    Speed prot_Speeds_name;
+    cout << "Enter name of the Racer: ";
     is >> r.name;
     is.ignore(1000, '\n');
     cout << "Enter the number of circles: ";
     getline(is, prot_number_st);
-    int prot_number = CheckNum(prot_number_st);
+    int prot_number = checkNum(prot_number_st);
     while (!prot_number) {
         cout << "Enter the number of circles again: ";
         getline(is, prot_number_st);
-        prot_number = CheckNum(prot_number_st);
+        prot_number = checkNum(prot_number_st);
     }
     r.number = prot_number;
-    cout << "Enter the speed data in the following format: " << endl;
+    cout << "Enter the Speed data in the following format: " << endl;
     cout << "1 50.0 km/h(m/s)" << endl;
     for (int i = 0; i < r.number; ++i) {
         cout << "Enter " << i + 1 << " element: " << endl;
-        is >> prot_speeds_name;
-        while (!is || prot_speeds_name.nomber != (i + 1) || prot_speeds_name.exeptetionsmy()) {
+        is >> prot_Speeds_name;
+        while (!is || prot_Speeds_name.nomber != (i + 1) || prot_Speeds_name.exeptetionsmy()) {
             is.clear();
             is.ignore(1000, '\n');
-            cout << "Enter the speed data again: ";
-            is >> prot_speeds_name;
+            cout << "Enter the Speed data again: ";
+            is >> prot_Speeds_name;
         }
-        r.speeds_name.push_back(prot_speeds_name);
+        r.Speeds_name.push_back(prot_Speeds_name);
     }
     return is;
 }
 
-void displaySpeeds(const vector<racer>& racers) {//функция красивого вывода в консоль
+void displaySpeeds(const vector<Racer>& Racers) {//функция красивого вывода в консоль
     cout << fixed << setprecision(2);
     cout << setw(15) << left << "Name" << setw(13) << left << "Numbers" << setw(12) << left << "Number" << setw(19) << left << "Speed(before)" << setw(18) << left << "Speed(after)" << "Best Circle\n";
-    for (auto sp : racers) {
+    for (auto sp : Racers) {
         cout << sp;
     }
 }
@@ -252,21 +252,21 @@ int main() {
         cout << "Enter your chose again: ";
         getline(cin, choise1);
     }
-    vector<racer> racers;
-    vector<speed> speeds;
+    vector<Racer> Racers;
+    vector<Speed> Speeds;
     string name;//имя файла для ввода/вывода
     if (choise1 == "c") {
         cout << "Enter length of array: ";
         int length = check();
         for (int i = 0; i < length; ++i) {
-            racer ruch;
+            Racer ruch;
             cout << i + 1 << ": " << endl;
             cin >> ruch;
-            racers.emplace_back(ruch);
+            Racers.emplace_back(ruch);
         }
     }
     else {
-        racer fragment;
+        Racer fragment;
         cout << "Enter the name of the file: ";
         cin >> name;
         ifstream fin(name);
@@ -276,38 +276,38 @@ int main() {
         }
         else {
             string line;
-            string name_of_racer;
-            while (getline(fin, name_of_racer)) {
+            string name_of_Racer;
+            while (getline(fin, name_of_Racer)) {
                 getline(fin, line);
-                int len = CheckNum(line);
+                int len = checkNum(line);
                 line.clear();
                 if (len == 0) {
                     cout << "Invalid file reading!" << endl;
                     line.clear();
-                    getline(fin, name_of_racer);
-                    while (name_of_racer != "") {
-                        getline(fin, name_of_racer);
+                    getline(fin, name_of_Racer);
+                    while (name_of_Racer != "") {
+                        getline(fin, name_of_Racer);
                     }
-                    getline(fin, name_of_racer);
+                    getline(fin, name_of_Racer);
                     getline(fin, line);
-                    len = CheckNum(line);
+                    len = checkNum(line);
                     line.clear();
                 }
-                speed element;
+                Speed element;
                 int i = -1;
                 do {
                     i += 1;
                     fin >> element;
                     if (!(element.exeptetionsmy() || (element.nomber != (i + 1)))) {
-                        speeds.emplace_back(element);
+                        Speeds.emplace_back(element);
                     }
                 } while (!(element.exeptetionsmy() || (element.nomber != (i + 1))));
 
-                fragment.name = name_of_racer;
+                fragment.name = name_of_Racer;
                 fragment.number = len;
-                fragment.speeds_name = speeds;
-                racers.emplace_back(fragment);
-                speeds.clear();
+                fragment.Speeds_name = Speeds;
+                Racers.emplace_back(fragment);
+                Speeds.clear();
             }
         }
         fin.close();
@@ -322,23 +322,23 @@ int main() {
         getline(cin, choise2);
     }
     if (choise2 == "c") {
-        if (racers.size() == 0) {
+        if (Racers.size() == 0) {
             cout << "\nThere are no avalubale lines to give you\n";
         }
         else {
             cout << fixed << setprecision(2);
             cout << "\nArray of instances of the class:\n\n";
             cout << setw(13) << left << "Name" << setw(8) << left << "Numbers" << setw(10) << left << "Number" << "Speed Unit of measurement\n";
-            for (const auto sp : racers) {
-                cout << setw(13) << sp.name << setw(8) << sp.number << setw(10) << left << sp.speeds_name[0] << endl;
-                for (int i = 1; i < sp.speeds_name.size(); ++i) {
-                    cout << setw(21) << "" << setw(8) << left << sp.speeds_name[i] << endl;
+            for (const auto sp : Racers) {
+                cout << setw(13) << sp.name << setw(8) << sp.number << setw(10) << left << sp.Speeds_name[0] << endl;
+                for (int i = 1; i < sp.Speeds_name.size(); ++i) {
+                    cout << setw(21) << "" << setw(8) << left << sp.Speeds_name[i] << endl;
                 }
-                cout << "----------------------------------------\n";
+                cout << "------------------------------------------\n";
             }
             cout << endl;
             cout << "\nArray processing results of instances of the class:\n\n";
-            displaySpeeds(racers);
+            displaySpeeds(Racers);
         }
     }
     else {
@@ -351,28 +351,28 @@ int main() {
             return 1;
         }
         else {
-            if (racers.size() == 0) {
-                cout << "\nThere are no avalubale lines to give you\n";
+            if (Racers.size() == 0) {
+                fout << "\nThere are no avalubale lines to give you\n";
             }
             else {
                 fout << fixed << setprecision(2);
                 fout << "\nArray of instances of the class:\n\n";
                 fout << setw(13) << left << "Name" << setw(8) << left << "Numbers" << setw(10) << left << "Number" << "Speed Unit of measurement\n";
-                for (const auto sp : racers) {
-                    fout << setw(13) << sp.name << setw(8) << sp.number << setw(10) << left << sp.speeds_name[0] << endl;
-                    for (int i = 1; i < sp.speeds_name.size(); ++i) {
-                        fout << setw(21) << "" << setw(8) << left << sp.speeds_name[i] << endl;
+                for (const auto sp : Racers) {
+                    fout << setw(13) << sp.name << setw(8) << sp.number << setw(10) << left << sp.Speeds_name[0] << endl;
+                    for (int i = 1; i < sp.Speeds_name.size(); ++i) {
+                        fout << setw(21) << "" << setw(8) << left << sp.Speeds_name[i] << endl;
                     }
-                    fout << "----------------------------------------\n";
+                    fout << "------------------------------------------\n";
                 }
                 fout << endl;
                 fout << fixed << setprecision(2);
                 fout << "Array processing results of instances of the class:\n\n";
-                for (const auto r : racers) {
+                for (const auto r : Racers) {
                     fout << setw(10) << left << "Name" << setw(13) << left << "Numbers" << setw(12) << left << "Number" << setw(19) << left << "Speed(before)" << setw(18) << left << "Speed(after)" << "Best Circle\n";
-                    fout << setw(10) << left << r.name << setw(13) << left << r.number << setw(19) << r.speeds_name[0] << r.speeds_name[0].SpedChanger() << " " << setw(12) << r.speeds_name[0].UnitChanger() << r.BestCircle() << endl;
-                    for (int i = 1; i < r.speeds_name.size(); ++i) {
-                        fout << setw(23) << " " << setw(19) << r.speeds_name[i] << r.speeds_name[i].SpedChanger() << " " << setw(12) << r.speeds_name[i].UnitChanger() << endl;
+                    fout << setw(10) << left << r.name << setw(13) << left << r.number << setw(19) << r.Speeds_name[0] << r.Speeds_name[0].SpedChanger() << " " << setw(12) << r.Speeds_name[0].UnitChanger() << r.BestCircle() << endl;
+                    for (int i = 1; i < r.Speeds_name.size(); ++i) {
+                        fout << setw(23) << " " << setw(19) << r.Speeds_name[i] << r.Speeds_name[i].SpedChanger() << " " << setw(12) << r.Speeds_name[i].UnitChanger() << endl;
                     }
                     fout << "------------------------------------------------------------------------------------\n";
                 }
@@ -380,7 +380,7 @@ int main() {
         }
         fout.close();
     }
-    racers.clear();
+    Racers.clear();
     cout << "\nHave a nice day!";
     return 0;
 }
