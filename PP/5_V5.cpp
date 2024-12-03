@@ -88,7 +88,7 @@ public://доступно для всех мест программы
         return os << setw(12) << left << r.nomber << setw(6) << r.sped << " " << setw(12) << r.unit_measure;
     }
 
-    friend ostream& operator<<(ofstream& os, const Speed& r) // перегрузка оператора помещения в поток
+    friend ostream& operator<<(ofstream& os, const Speed& r) // перегрузка оператора помещения в файл
     {
         return os << setw(12) << left << r.nomber << setw(6) << r.sped << " " << setw(12) << r.unit_measure;
     }
@@ -131,7 +131,7 @@ public://доступно для всех мест программы
         return is;
     }
 
-    friend istream& operator>>(ifstream& is, Speed& r) // перегрузка оператора взятия из потока
+    friend istream& operator>>(ifstream& is, Speed& r) // перегрузка оператора взятия из файла
     {
         //проверка на соответствие типам полей класса
         is >> r.nomber;
